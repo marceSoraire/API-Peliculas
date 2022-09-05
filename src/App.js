@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
 import Nav from './Components/Nav/Nav';
 import Loading from './Components/Loading/Loading'
@@ -16,14 +16,14 @@ const App = () => {
   }
 
   const handleOnSubmit = (e) => {
+    setLoad(true)
     e.preventDefault();
-    const movieInput = input.toLocaleLowerCase();
+    const movieInput = input.toLocaleLowerCase().replace(' ','+');
     if (movieInput) {
       const getMovie = async () => {
         try {
           const res = await axios(`https://omdbapi.com/?t=${movieInput}&apikey=af8636e`);
           setMovie(res.data)
-
         } catch (error) {
           console.log(error.message);
         }
@@ -31,12 +31,8 @@ const App = () => {
       getMovie();
     }
     setInput('');
+    setTimeout(() => setLoad(false), 1000);
   }
-
-  useEffect(() => {
-    setLoad(true)
-    setTimeout(() => setLoad(false), 1500);
-  }, [])
 
   return (
     <div className="App">
@@ -52,7 +48,6 @@ const App = () => {
         />
         <button className='btn'>Buscar</button>
       </form>
-
       {load ? (
         <Loading />
       ) : movie.imdbID ? (
